@@ -57,8 +57,8 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
             if (existingTask.due !== `${task.task.due?.split('T')[0]}T00:00:00.000Z` || compareTwoStrings(existingTask.notes || "", task.task.notes || "") !== 1 || existingTask.title !== task.task.title) {
                 await tasksApi.tasks.update({
                     tasklist: options.tasklist,
-                    task: task.task.id!,
-                    requestBody: task.task
+                    task: existingTask.id!,
+                    requestBody: { ...task.task, id: existingTask.id! }
                 });
             }
         } else {

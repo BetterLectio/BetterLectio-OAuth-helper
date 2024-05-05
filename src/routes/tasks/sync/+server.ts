@@ -48,6 +48,8 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
     const opgaver = await resp.json() as Opgave[];
     const tasks = formatTasks(opgaver, options);
 
+    let newTasks = 0;
+    let updatedTasks = 0;
     for (let i = 0; i < tasks.length; i++) {
         const task = tasks[i];
         const existingTask = existingTasks?.find((t) => t.notes?.includes(`BetterLectio ID (skal beholdes): ${task.id}`));
@@ -60,16 +62,18 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
                     task: existingTask.id!,
                     requestBody: { ...task.task, id: existingTask.id! }
                 });
+                updatedTasks++;
             }
         } else {
             await tasksApi.tasks.insert({
                 tasklist: options.tasklist,
                 requestBody: task.task
             });
+            newTasks++;
         }
     }
 
-    return new Response("OK", {
+    return new Response(JSON.stringify({ new: newTasks, updated: updatedTasks }), {
         headers: {
             'Access-Control-Allow-Methods': 'POST, OPTIONS',
             'Access-Control-Allow-Origin': '*',

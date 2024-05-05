@@ -1,8 +1,8 @@
 
-import { error } from '@sveltejs/kit';
-import type { RequestHandler } from './$types';
-import { google as googleLib } from 'googleapis';
 import { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI } from '$env/static/private';
+import { error } from '@sveltejs/kit';
+import { google as googleLib } from 'googleapis';
+import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = async ({ request, fetch }) => {
     const headers = request.headers;
@@ -20,7 +20,13 @@ export const GET: RequestHandler = async ({ request, fetch }) => {
     } catch (e) {
         return error(401, 'Invalid google token');
     }
-    return new Response("OK");
+    return new Response("OK", {
+        headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, OPTIONS',
+            'Access-Control-Allow-Headers': '*'
+        }
+    });
 };
 
 export const OPTIONS: RequestHandler = async () => {

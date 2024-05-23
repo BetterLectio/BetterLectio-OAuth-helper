@@ -1,6 +1,6 @@
 import { DateTime } from "luxon";
 
-export const LECTIO_API_URL = 'https://api.betterlectio.dk';
+export const LECTIO_API_URL = 'https://api.bedstelectio.dk';
 
 export const convertLectioTime = (dateString: string) => {
     const matchArray = dateString.match(/\d+/gu);

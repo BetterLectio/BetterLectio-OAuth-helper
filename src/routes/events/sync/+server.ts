@@ -1,5 +1,5 @@
 import { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI } from '$env/static/private';
-import { LECTIO_API_URL, checkLectioCookie, convertLectioInterval } from '$lib/lectio';
+import { LECTIO_API_URL, checkLectioCookie, convertLectioExamName, convertLectioInterval } from '$lib/lectio';
 import type { CalendarEvent, EventSyncOptions, GoogleResponse } from '$lib/types/google';
 import type { Modul } from '$lib/types/lectio';
 import { CORS_HEADERS, errorResponse } from '$lib/utils';
@@ -113,7 +113,7 @@ function formatModuler(moduler: Modul[], options: EventSyncOptions): CalendarEve
 		const [startDate, endDate] = convertLectioInterval(modul.tidspunkt!);
 
 		return {
-			summary: modul.hold,
+			summary: modul.navn ? convertLectioExamName(modul.navn) : modul.hold,
 			id: `betterlectio${modul.absid}at${DateTime.now().toFormat('yyyyMMddHHmmss')}`,
 			description: `https://app.betterlectio.dk/modul?absid=${modul.absid}`,
 			start: {

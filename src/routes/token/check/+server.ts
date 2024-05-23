@@ -1,14 +1,14 @@
 
 import { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI } from '$env/static/private';
-import { error } from '@sveltejs/kit';
 import { google as googleLib } from 'googleapis';
 import type { RequestHandler } from './$types';
+import { CORS_HEADERS, errorResponse } from '$lib/utils';
 
 export const GET: RequestHandler = async ({ request, fetch }) => {
     const headers = request.headers;
     const googleToken = headers.get('google');
 
-    if (!googleToken) return error(400, 'Missing google auth');
+    if (!googleToken) return errorResponse('Missing google auth', 400);
 
     const calAuth = new googleLib.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
     let decodedGoogleToken = JSON.parse(atob(googleToken));
@@ -18,23 +18,11 @@ export const GET: RequestHandler = async ({ request, fetch }) => {
     try {
         await calApi.calendarList.list();
     } catch (e) {
-        return error(401, 'Invalid google token');
+        return errorResponse("Invalid google token", 401);
     }
-    return new Response("OK", {
-        headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET, OPTIONS',
-            'Access-Control-Allow-Headers': '*'
-        }
-    });
+    return new Response("OK", { headers: CORS_HEADERS });
 };
 
 export const OPTIONS: RequestHandler = async () => {
-    return new Response(null, {
-        headers: {
-            'Access-Control-Allow-Methods': 'GET, OPTIONS',
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Headers': '*'
-        }
-    });
+    return new Response(null, { headers: CORS_HEADERS });
 };
